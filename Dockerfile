@@ -1,5 +1,5 @@
 FROM alpine:latest
-RUN apk add --update curl && rm -rf /var/cache/apk/*
+RUN apk add --update curl jq && rm -rf /var/cache/apk/*
 
 ADD https://github.com/channable/vaultenv/releases/download/v0.5.0/vaultenv-0.5.0_x86_64-ubuntu-linux.2_x86_64-linux /usr/bin/vaultenv
 RUN chmod +x /usr/bin/vaultenv
