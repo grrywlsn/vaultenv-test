@@ -1,10 +1,9 @@
-FROM alpine:latest
-RUN apk add --update curl jq && rm -rf /var/cache/apk/*
+FROM ubuntu:17.04
+RUN apt-get -qq update && apt-get -qq -y install curl jq
 
 ADD https://github.com/channable/vaultenv/releases/download/v0.5.0/vaultenv-0.5.0_x86_64-ubuntu-linux.2_x86_64-linux /usr/bin/vaultenv
 RUN chmod +x /usr/bin/vaultenv
 
-COPY /secrets/secrets.file /secrets/secrets.file
-ENV DOCKERFILE test
-#RUN /usr/bin/vaultenv --token abc123 --no-connect-tls --secrets-file /secrets/secrets.file ./usr/bin/printenv
-CMD ["printenv"]
+COPY vaultenv.sh /opt/vaultenv.sh
+RUN chmod +x /opt/vaultenv.sh
+CMD ["/opt/vaultenv.sh"]
