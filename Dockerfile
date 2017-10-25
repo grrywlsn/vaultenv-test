@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc:latest
 
-RUN apk add --update curl bash && \
+RUN apk add --update curl bash openssl && \
     rm -rf /var/cache/apk/*
 
 RUN curl -o /usr/bin/jq http://stedolan.github.io/jq/download/linux64/jq \
