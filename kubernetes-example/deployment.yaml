@@ -23,7 +23,7 @@ spec:
                  --port ${VAULT_SERVICE_PORT_VAULT} \
                  --no-connect-tls \
                  --token ${VAULT_TOKEN} \
-                 --secrets-file /etc/secrets.d/logstash.secrets \
+                 --secrets-file /secrets/secrets.file \
                  /usr/bin/printenv
         volumeMounts:
         - name: secrets-map
