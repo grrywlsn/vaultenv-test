@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: test-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+    spec:
+      serviceAccountName: my-app-service-account
+      containers:
+      - name: vault-test
+        image: grrywlsn/vaultenv-test
+        imagePullPolicy: Always
+        command:
+          - "/bin/bash"
+          - "-ec"
+          - |
+            JSON_WEB_TOKEN=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`
+            VAULT_TOKEN=`curl http://${VAULT_SERVICE_HOST}:${VAULT_SERVICE_PORT}/v1/auth/kubernetes/login -d '{ "jwt": "'"$JSON_WEB_TOKEN"'", "role": "my-app" }'  | jq -r '.auth.client_token'`
+            exec vaultenv \
+                 --host ${VAULT_SERVICE_HOST} \
+                 --port ${VAULT_SERVICE_PORT_VAULT} \
+                 --no-connect-tls \
+                 --token ${VAULT_TOKEN} \
+                 --secrets-file /etc/secrets.d/logstash.secrets \
+                 /usr/bin/printenv
+        volumeMounts:
+        - name: secrets-map
+          mountPath: /secrets
+      volumes:
+      - name: secrets-map
+        configMap:
+          name: test-deploy-secret-map

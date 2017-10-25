@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-deploy-secret-map
+  namespace: default
+data:
+  secrets.file: |-
+    ISWORKING=helm-app/mytribe-sandbox/myapp#myappisworking
