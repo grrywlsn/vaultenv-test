@@ -6,7 +6,8 @@ No init-containers or sidecar injection are required; provided the Docker image
 you wish to run has the vaultenv binary, it can work.
 
 ## requirements
-- [Vaultenv](https://github.com/channable/vaultenv) in the container of your Kubernets deployment
+- [Vaultenv](https://github.com/channable/vaultenv) in the container of your Kubernetes deployment
+- [jq](https://stedolan.github.io/jq/) also in the container, but this could be swapped for some horrible shell parsing of JSON
 - Vault 0.8.3 or greater, with Kubernetes auth backend enabled.
 
 ## vault setup
@@ -44,3 +45,5 @@ A number of variables here might need to change for different deployments:
 - VAULT_SERVICE_HOST and VAULT_SERVICE_PORT_VAULT were provided automatically by Kubernetes based on the service name and port of the Vault deployment. This may need to be adjusted for your own Vault installation.
 - `no-connect-tls` is in place because it was a dev Vault; production Vault will need to be over HTTPS.
 - `/usr/bin/printenv` is used as the application called by vaultenv; in reality the entrypoint of the Docker image should be here instead
+
+When the deployment is made, the logs should show the curl commands and the content of printenv. If the secret is found, `ISWORKING=yesitsworking` should appear in the output.
