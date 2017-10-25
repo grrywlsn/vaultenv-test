@@ -4,8 +4,13 @@ metadata:
   name: test-deploy
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: test-deploy
   template:
     metadata:
+      labels:
+        app: test-deploy
     spec:
       serviceAccountName: my-app-service-account
       containers:
