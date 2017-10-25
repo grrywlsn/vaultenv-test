@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: test-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-deploy
+  template:
+    metadata:
+      labels:
+        app: test-deploy
+    spec:
+      serviceAccountName: my-app-service-account
+      initContainers:
+      - name: vaultenv
+        image: grrywlsn/vaultenv-test
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: secrets-map
+          mountPath: /secrets
+        - name: env-variables-volume
+          mountPath: /etc/env-variables
+      containers:
+      - name: busybox
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command:
+          - sleep
+          - "36000"
+        volumeMounts:
+        - name: env-variables-volume
+          mountPath: /etc/env-variables
+      volumes:
+      - name: secrets-map
+        configMap:
+          name: test-deploy-secret-map
+      - name: env-variables-volume
+        emptyDir: {}
