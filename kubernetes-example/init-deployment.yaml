@@ -12,29 +12,36 @@ spec:
       labels:
         app: test-deploy
     spec:
-      serviceAccountName: my-app-service-account
-      initContainers:
-      - name: vaultenv
-        image: grrywlsn/vaultenv-test
-        imagePullPolicy: Always
-        volumeMounts:
-        - name: secrets-map
-          mountPath: /secrets
-        - name: env-variables-volume
-          mountPath: /etc/env-variables
+      serviceAccountName: myapp-service-account
       containers:
-      - name: busybox
-        image: busybox
-        imagePullPolicy: IfNotPresent
+      - name: helm-variables
+        image: grrywlsn/helm-variables:latest
+        imagePullPolicy: Always
+        env:
+        - name: APP_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: APP_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONSUL_SERVICE_HOST
+          value: "consul.service.zhq.consul"
+        - name: CONSUL_SERVICE_PORT
+          value: "8080"
+        - name: CONSUL_TOKEN
+          value: "zopa-app-readonly"
+        - name: VAULT_SERVICE_HOST
+          value: "10.244.5.15"
+        - name: VAULT_SERVICE_PORT
+          value: "8200"
         command:
           - sleep
           - "36000"
         volumeMounts:
-        - name: env-variables-volume
-          mountPath: /etc/env-variables
+        - name: source-volume
+          mountPath: /source
       volumes:
-      - name: secrets-map
-        configMap:
-          name: test-deploy-secret-map
-      - name: env-variables-volume
+      - name: source-volume
         emptyDir: {}
